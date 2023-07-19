@@ -27,7 +27,8 @@ logger = logging.getLogger(__name__)
 class Cipher:
     def __init__(self, js: str):
         self.transform_plan: List[str] = get_transform_plan(js)
-        var_regex = re.compile(r"^\w+\W")
+        # var_regex = re.compile(r"^\w+\W")
+        var_regex = re.compile(r"^\$*\w+\W")
         var_match = var_regex.search(self.transform_plan[0])
         if not var_match:
             raise RegexMatchError(
@@ -224,13 +225,13 @@ def get_transform_object(js: str, var: str) -> List[str]:
     regex = re.compile(pattern, flags=re.DOTALL)
     transform_match = regex.search(js)
     if not transform_match:
-        raise RegexMatchError(caller="get_transform_object", pattern=pattern)
         # Temporary fix for issue: https://github.com/pytube/pytube/issues/1728 
         # raise RegexMatchError(caller="get_transform_object", pattern=pattern)
         logger.error(f"No match found for pattern: {pattern}")
         return []
 
     return transform_match.group(1).replace("\n", " ").split(", ")
+
 
 def get_transform_map(js: str, var: str) -> Dict:
     """Build a transform function lookup.
@@ -272,8 +273,9 @@ def get_throttling_function_name(js: str) -> str:
         # a.C && (b = a.get("n")) && (b = Bpa[0](b), a.set("n", b),
         # Bpa.length || iha("")) }};
         # In the above case, `iha` is the relevant function name
-        r'a\.[a-zA-Z]\s*&&\s*\([a-z]\s*=\s*a\.get\("n"\)\)\s*&&.*?\|\|\s*([a-z]+)',
+        r'a\.[a-zA-Z]\s*&&\s*\([a-z]\s*=\s*a\.get\("n"\)\)\s*&&\s*'
         r'\([a-z]\s*=\s*([a-zA-Z0-9$]+)(\[\d+\])?\([a-z]\)',
+        r'a\.[a-zA-Z]\s*&&\s*\([a-z]\s*=\s*a\.get\("n"\)\)\s*&&.*?\|\|\s*([a-z]+)',
     ]
     logger.debug('Finding throttling function name')
     for pattern in function_patterns:
