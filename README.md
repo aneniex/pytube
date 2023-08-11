@@ -57,7 +57,7 @@ Install
 ```bash
 sudo apt install git
 cd ~
-git clone https://github.com/oncename/pytube.git
+git clone https://github.com/aneniex/pytube.git
 cd pytube
 pip install .
 ```
@@ -71,7 +71,7 @@ $ python -m pip install pytube
 Sometimes, the PyPI release becomes slightly outdated. To install from the source with pip:
 
 ```bash
-$ python -m pip install git+https://github.com/oncename/pytube
+$ python -m pip install git+https://github.com/aneniex/pytube
 ```
 
 ### Using pytube in a Python script
